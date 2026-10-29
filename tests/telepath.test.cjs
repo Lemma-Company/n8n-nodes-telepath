@@ -21,6 +21,9 @@ test('OAuth uses n8n DCR with canonical resource and PKCE, without embedded secr
  assert.deepEqual(c.extends,['oAuth2Api']);assert.equal(p.useDynamicClientRegistration,true);assert.equal(p.grantType,'pkce');
  assert.equal(p.serverUrl,'https://telepath.lemma.company/mcp');assert.equal(p.resourceUrl,p.serverUrl);
  assert.equal(p.scope,'telegram.read telegram.write');assert.ok(!('clientSecret'in p));
+ assert.equal(c.test.request.method,'POST');assert.equal(c.test.request.url,'/chats/list');
+ assert.equal(c.test.request.baseURL,'https://telepath.lemma.company/api/v1');
+ assert.deepEqual(c.test.request.body,{limit:1});
 });
 test('optional booleans and empty text remain intentional; absent fields stay absent',()=>{
  const a=args('kb_update_note',{}, {id:17,body:'',append:false,tags:'[]',reminder:'null'});
@@ -44,7 +47,18 @@ test('GET path and query are separated; body action uses JSON and a fixed origin
  await requestOperation(op('telegram_get_messages'),{chat_id:-123,limit:20},request,async()=>{},node);
  assert.equal(calls[0].url,'https://telepath.lemma.company/api/v1/chats/-123/messages');assert.deepEqual(calls[0].qs,{limit:20});assert.equal(calls[0].body,undefined);
  await requestOperation(op('kb_create_note'),{title:'Note',body:'x'},request,async()=>{},node);
- assert.deepEqual(calls[1].body,{title:'Note',body:'x'});assert.equal(calls[1].method,'POST');assert.equal(calls[1].json,true);
+ assert.deepEqual(JSON.parse(calls[1].body),{title:'Note',body:'x'});assert.equal(calls[1].method,'POST');assert.equal(calls[1].json,true);
+ assert.equal(calls[1].headers['Content-Type'],'application/json');
+});
+test('optional-only POST operations preserve an empty JSON body through HTTP serialization',async()=>{
+ for(const name of ['telegram_list_chats','kb_list_notes','list_reminders']) {
+  await requestOperation(op(name),{},async options=>{
+   assert.equal(typeof options.body,'string');
+   assert.equal(options.body,'{}');
+   assert.equal(options.headers['Content-Type'],'application/json');
+   return {ok:true};
+  },async()=>{},node);
+ }
 });
 test('read 429 waits Retry-After and retries at most twice',async()=>{
  let calls=0;const waits=[];

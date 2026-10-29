@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-telepath",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Connect Telepath to n8n: search your Telegram archive, work with files, Notes and reminders, and send authorized replies.",
   "license": "MIT",
   "homepage": "https://telepath.lemma.company",

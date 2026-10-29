@@ -25,3 +25,13 @@
 - [ ] Submit through https://creators.n8n.io/nodes and address reviewer feedback.
 
 The local tests use synthetic accounts and mocked Telegram calls. They do not prove the complete n8n browser sign-in journey or imply that n8n has approved this package. Do not mark external gates complete based only on local build/lint output.
+
+## 0.1.2 regression verification
+
+- 15 package tests pass, including optional-only POST bodies and the credential probe definition; strict lint passes.
+- 60 requests across all 30 operations pass through the actual n8n 2.45.5 HTTP adapter to a local receiver: minimum required fields and populated optional fields. JSON bodies are checked against the backend REST schemas; GET query/path mapping is checked separately.
+- Reproduce the cross-repository transport check after building both projects with:
+  `node tests/http-contract.mjs /path/to/n8n-runtime /path/to/telepath-backend`.
+  The runtime directory must contain `node_modules/@n8n/backend-network`; the backend must contain `dist/rest-catalog.js`. Test traffic stays on localhost. No user credentials are used.
+- The backend's 19 isolated REST tests pass with synthetic accounts and mocked Telegram calls.
+- This coverage verifies serialization, routing and server behavior in fixtures. Real message sends, reactions, archive deletion and channel publishing were not executed against user chats.

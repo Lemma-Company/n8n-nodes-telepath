@@ -43,8 +43,10 @@ export async function requestOperation(
   let path = op.path;
   if (path.includes('{chat_id}')) {path = path.replace('{chat_id}', encodeURIComponent(String(payload.chat_id))); delete payload.chat_id;}
   const options: IHttpRequestOptions = {method: op.method, url: API_URL + path, json: true, timeout: 30000,
-    headers: {'Accept': 'application/json'},
-    ...(op.method === 'GET' ? {qs: payload as IDataObject} : {body: payload as IDataObject})};
+    headers: {'Accept': 'application/json', ...(op.method === 'POST' ? {'Content-Type': 'application/json'} : {})},
+    // n8n's Axios adapter drops empty object bodies. Serialize explicitly so
+    // optional-only operations still send a JSON object when no fields are set.
+    ...(op.method === 'GET' ? {qs: payload as IDataObject} : {body: JSON.stringify(payload)})};
   for (let attempt = 0; ; attempt++) {
     try {
       const result = await request(options);
