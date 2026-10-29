@@ -4,17 +4,17 @@ Connect your Telegram to n8n through [Telepath](https://telepath.lemma.company).
 
 Telepath is hosted: you do not need to run a Telepath server or provide Telegram API ID/hash credentials. Your own n8n instance can be n8n Cloud or self-hosted, subject to package availability.
 
-**Release status:** prepared for verification; not yet published to npm or approved by n8n. The GitHub repository URL is the intended publication destination. A successful build is not directory approval. Install from source for evaluation until publication.
+**Directory status:** community integration, not yet verified by n8n. Source and examples are public. n8n Cloud installation requires directory verification; use self-hosted n8n while verification is pending.
 
 ## Installation
 
-Before verification, use a self-hosted development n8n instance. Clone the published repository once available, run `npm ci`, `npm run build`, then `npm run dev`. For local evaluation, use this source directory. Do not install an unverified package in n8n Cloud: Cloud availability requires n8n approval.
+Before verification, use a self-hosted development n8n instance. Clone this repository, run `npm ci`, `npm run build`, then `npm run dev`. For local evaluation, use this source directory. Do not install an unverified package in n8n Cloud: Cloud availability requires n8n approval.
 
 After npm publication, self-hosted administrators can install `n8n-nodes-telepath` from Settings → Community Nodes. After verification, users with community nodes enabled will be able to find Telepath in the node panel.
 
 ## Credentials
 
-Use a current n8n release supporting OAuth2 dynamic client registration (DCR). Node/credential loading and real DCR were checked on n8n 2.45.5. Real Telegram sign-in, chat reads, and a repeatable collection workflow were also tested. Token refresh remains a separate release check.
+Use a current n8n release supporting OAuth2 dynamic client registration (DCR). Node/credential loading and real DCR were checked on n8n 2.45.5. Real Telegram sign-in, chat reads, and a repeatable collection workflow were also tested. Native n8n token refresh was verified by simulating an invalid access token: n8n refreshed the credential and successfully retried the read.
 
 1. Add the Telepath node and create a **Telepath OAuth2 API** credential.
 2. Select **Connect my account** and complete Telegram sign-in in the browser. n8n registers its own OAuth client, uses S256 PKCE and refreshes tokens through its built-in OAuth2 implementation. No shared client secret or user token is bundled in this package.
@@ -93,7 +93,7 @@ Use Node.js 24 for development and CI. Run `npm ci`, `npm test`, `npm run lint` 
 
 The node uses programmatic execution to apply safe read/write retry rules, pace item batches, validate optional structured fields and preserve setup metadata when splitting results. It uses n8n's authenticated HTTP helpers; no filesystem, environment-variable or direct network-library access occurs in the runtime node.
 
-The repository includes GitHub Actions CI and provenance publishing. Configure an npm trusted publisher for `Lemma-Company/n8n-nodes-telepath` and `publish.yml` before releasing. Token refresh verification and n8n review remain release gates; see `RELEASE-CHECKLIST.md`.
+The repository includes GitHub Actions CI and provenance publishing. Configure an npm trusted publisher for `Lemma-Company/n8n-nodes-telepath` and `publish.yml` before releasing. n8n directory review remains pending; see `RELEASE-CHECKLIST.md`.
 
 Support: https://telepath.lemma.company/support  
 Privacy: https://telepath.lemma.company/privacy  

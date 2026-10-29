@@ -16,9 +16,9 @@
 - [x] User completed setup and OAuth in the n8n editor and confirmed a successful manual run. The user also reviewed the icon; automated browser visual QA was unavailable.
 - [x] Real n8n DCR against Telepath passed after explicit approval: authorization URL, S256, scopes, canonical resource and redirect URI verified. This initial DCR-only check issued no user tokens; the later user-authorized sign-in is recorded below.
 - [x] Real Telegram sign-in and read operations passed. A collector workflow saved 200 messages into a temporary n8n table; a repeat run retained 200 unique rows. A subsequent user-run updated the same 200 rows without duplicates.
-- [ ] Verify refresh/reconnect using n8n's actual OAuth helper.
+- [x] Verify refresh using n8n's actual OAuth helper: injected an invalid access token into the isolated test credential; native refresh saved a new token and the complete read/table workflow succeeded. Temporary plaintext credential files were removed. Revoked-grant reconnect remains a manual support path.
 - [x] 30-operation REST catalog deployed; existing 25 routes preserved. Health and unauthenticated guards checked.
-- [ ] Create/verify the public `Lemma-Company/n8n-nodes-telepath` repository and npm publisher identity.
+- [x] Public `Lemma-Company/n8n-nodes-telepath` repository created; GitHub CI passed. npm publisher verified as `olegnikeshin`, with user-confirmed 2FA.
 - [ ] Configure npm trusted publishing for `.github/workflows/publish.yml`.
 - [ ] Publish the reviewed version from a version tag through GitHub Actions with provenance.
 - [ ] Run the n8n package scanner against the published npm package.
