@@ -1,0 +1,56 @@
+{
+  "name": "n8n-nodes-telepath",
+  "version": "0.1.0",
+  "description": "Connect Telepath to n8n: search your Telegram archive, work with files, Notes and reminders, and send authorized replies.",
+  "license": "MIT",
+  "homepage": "https://telepath.lemma.company",
+  "keywords": [
+    "n8n-community-node-package"
+  ],
+  "author": {
+    "name": "Lemma",
+    "email": "hello@lemma.company",
+    "url": "https://lemma.company"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lemma-Company/n8n-nodes-telepath.git"
+  },
+  "scripts": {
+    "build": "n8n-node build",
+    "build:watch": "tsc --watch",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "release": "n8n-node release",
+    "prepublishOnly": "n8n-node prerelease",
+    "test": "npm run build && node tests/telepath.test.cjs"
+  },
+  "files": [
+    "dist",
+    "examples",
+    "CHANGELOG.md",
+    "RELEASE-CHECKLIST.md"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "strict": true,
+    "credentials": [
+      "dist/credentials/TelepathOAuth2Api.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Telepath/Telepath.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "0.54.4",
+    "eslint": "9.32.0",
+    "prettier": "3.6.2",
+    "release-it": "^21.1.0",
+    "typescript": "5.9.2",
+    "n8n-workflow": "2.16.0"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}

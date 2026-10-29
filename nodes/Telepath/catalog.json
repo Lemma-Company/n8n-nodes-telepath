@@ -1,0 +1,3868 @@
+[
+  {
+    "path": "/messages/photos",
+    "tool": "telegram_get_photos",
+    "group": "Chats & groups",
+    "summary": "Get multiple archived photos",
+    "description": "Retrieve up to five photos from one archived chat. Returns photo data and expiring links; n8n does not render the ChatGPT photo widget.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "chat_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "message_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "exclusiveMinimum": 0
+          },
+          "minItems": 1,
+          "maxItems": 5
+        }
+      },
+      "required": [
+        "chat_id",
+        "message_ids"
+      ],
+      "additionalProperties": false
+    },
+    "feature": "media",
+    "write": false,
+    "channelAllowed": true,
+    "method": "POST",
+    "resource": "media",
+    "fields": [
+      {
+        "apiName": "chat_id",
+        "name": "chatId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Chat ID",
+          "name": "chatId",
+          "type": "number",
+          "default": 0,
+          "description": "Chat ID returned by a Telepath chat operation. Bot inbox operations use their separate inbox IDs.",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "message_ids",
+        "name": "messageIds",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "exclusiveMinimum": 0
+          },
+          "minItems": 1,
+          "maxItems": 5
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Message IDs",
+          "name": "messageIds",
+          "type": "json",
+          "default": "[]",
+          "description": "JSON array of up to five message IDs from the same chat",
+          "required": true
+        }
+      }
+    ]
+  },
+  {
+    "path": "/bot/messages",
+    "tool": "telegram_bot_direct_messages",
+    "group": "Bot inbox",
+    "summary": "List bot inbox messages",
+    "description": "Read the bot's separate direct-message inbox. Never mix this line with private Business chats, even when chat IDs match.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "additionalProperties": false
+    },
+    "feature": "bot_dm",
+    "write": false,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "botInbox",
+    "fields": [
+      {
+        "apiName": "limit",
+        "name": "limit",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Limit",
+          "name": "limit",
+          "type": "number",
+          "default": 50,
+          "description": "Max number of results to return",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": 1,
+            "maxValue": 100
+          }
+        }
+      }
+    ]
+  },
+  {
+    "path": "/bot/reply",
+    "tool": "telegram_bot_dm_reply",
+    "group": "Bot inbox",
+    "summary": "Reply in the bot inbox",
+    "description": "Send an authorized reply as the bot to someone present in this account's bot inbox. Does not reply in the owner's Business chat. Never automatically retry uncertain delivery.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "chat_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "chat_id",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "feature": "bot_dm",
+    "write": true,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "botInbox",
+    "fields": [
+      {
+        "apiName": "chat_id",
+        "name": "chatId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Chat ID",
+          "name": "chatId",
+          "type": "number",
+          "default": 0,
+          "description": "Chat ID returned by a Telepath chat operation. Bot inbox operations use their separate inbox IDs.",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "text",
+        "name": "text",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Text",
+          "name": "text",
+          "type": "string",
+          "default": "",
+          "description": "Value for text",
+          "typeOptions": {
+            "rows": 4
+          },
+          "required": true
+        }
+      }
+    ]
+  },
+  {
+    "path": "/bot/reaction",
+    "tool": "telegram_bot_dm_react",
+    "group": "Bot inbox",
+    "summary": "React in the bot inbox",
+    "description": "Set a reaction as the bot on a message in this account's separate bot inbox. Omit emoji to remove the reaction.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "chat_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "message_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "emoji": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "big": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "chat_id",
+        "message_id"
+      ],
+      "additionalProperties": false
+    },
+    "feature": "bot_dm",
+    "write": true,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "botInbox",
+    "fields": [
+      {
+        "apiName": "chat_id",
+        "name": "chatId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Chat ID",
+          "name": "chatId",
+          "type": "number",
+          "default": 0,
+          "description": "Chat ID returned by a Telepath chat operation. Bot inbox operations use their separate inbox IDs.",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "message_id",
+        "name": "messageId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Message ID",
+          "name": "messageId",
+          "type": "number",
+          "default": 0,
+          "description": "Message ID returned by Telepath",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "emoji",
+        "name": "emoji",
+        "schema": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Emoji",
+          "name": "emoji",
+          "type": "string",
+          "default": "",
+          "description": "Reaction emoji. Omit this field to remove the bot’s reaction."
+        }
+      },
+      {
+        "apiName": "big",
+        "name": "big",
+        "schema": {
+          "type": "boolean"
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Big",
+          "name": "big",
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to use a large reaction animation"
+        }
+      }
+    ]
+  },
+  {
+    "path": "/archive/forget",
+    "tool": "telegram_forget",
+    "group": "Archive",
+    "summary": "Delete archived messages",
+    "description": "Permanently delete Telepath archived messages in the specified scope. Does not delete messages in Telegram. Requires the account's archive deletion capability and explicit confirmation. Provide chat_id, before, or both.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "chat_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "before": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "confirmed": {
+          "type": "boolean",
+          "const": true
+        }
+      },
+      "required": [
+        "confirmed"
+      ],
+      "additionalProperties": false
+    },
+    "feature": "forget",
+    "write": true,
+    "channelAllowed": true,
+    "method": "POST",
+    "resource": "archive",
+    "fields": [
+      {
+        "apiName": "chat_id",
+        "name": "chatId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Chat ID",
+          "name": "chatId",
+          "type": "number",
+          "default": 0,
+          "description": "Chat ID returned by a Telepath chat operation. Bot inbox operations use their separate inbox IDs.",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          }
+        }
+      },
+      {
+        "apiName": "before",
+        "name": "before",
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Before",
+          "name": "before",
+          "type": "string",
+          "default": "",
+          "description": "ISO 8601 date and time including Z or UTC offset"
+        }
+      },
+      {
+        "apiName": "confirmed",
+        "name": "confirmed",
+        "schema": {
+          "type": "boolean",
+          "const": true
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Confirm Action",
+          "name": "confirmed",
+          "type": "boolean",
+          "default": false,
+          "description": "Whether you authorize this exact action and target",
+          "required": true
+        }
+      }
+    ]
+  },
+  {
+    "path": "/chats/list",
+    "tool": "telegram_list_chats",
+    "group": "Chats & groups",
+    "summary": "List Telegram chats",
+    "description": "List archived chats, including connected channels. An empty archive is not proof that Telegram has no messages.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        }
+      },
+      "additionalProperties": false
+    },
+    "feature": "read",
+    "write": false,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "chat",
+    "fields": [
+      {
+        "apiName": "limit",
+        "name": "limit",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Limit",
+          "name": "limit",
+          "type": "number",
+          "default": 50,
+          "description": "Max number of results to return",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": 1,
+            "maxValue": 200
+          }
+        }
+      }
+    ]
+  },
+  {
+    "path": "/messages/recent",
+    "tool": "telegram_recent_messages",
+    "group": "Chats & groups",
+    "summary": "Read recent messages",
+    "description": "Read recent saved messages across chats. New collection starts after Telegram connection; old history needs import.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        },
+        "since": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "feature": "read",
+    "write": false,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "chat",
+    "fields": [
+      {
+        "apiName": "limit",
+        "name": "limit",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Limit",
+          "name": "limit",
+          "type": "number",
+          "default": 50,
+          "description": "Max number of results to return",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": 1,
+            "maxValue": 200
+          }
+        }
+      },
+      {
+        "apiName": "since",
+        "name": "since",
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Since",
+          "name": "since",
+          "type": "string",
+          "default": "",
+          "description": "ISO 8601 date and time including Z or UTC offset"
+        }
+      }
+    ]
+  },
+  {
+    "path": "/messages/file",
+    "tool": "telegram_get_file",
+    "group": "Chats & groups",
+    "summary": "Read an archived file",
+    "description": "Retrieve file metadata, an expiring link and extracted text when supported. Imported files without stored Telegram file IDs may be unavailable. Do not share download links with other users.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "chat_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "message_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "include_text": {
+          "type": "boolean"
+        },
+        "max_chars": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50000
+        },
+        "offset_lines": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        }
+      },
+      "required": [
+        "chat_id",
+        "message_id"
+      ],
+      "additionalProperties": false
+    },
+    "feature": "media",
+    "write": false,
+    "channelAllowed": true,
+    "method": "POST",
+    "resource": "media",
+    "fields": [
+      {
+        "apiName": "chat_id",
+        "name": "chatId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Chat ID",
+          "name": "chatId",
+          "type": "number",
+          "default": 0,
+          "description": "Chat ID returned by a Telepath chat operation. Bot inbox operations use their separate inbox IDs.",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "message_id",
+        "name": "messageId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Message ID",
+          "name": "messageId",
+          "type": "number",
+          "default": 0,
+          "description": "Message ID returned by Telepath",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "include_text",
+        "name": "includeText",
+        "schema": {
+          "type": "boolean"
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Include Text",
+          "name": "includeText",
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to extract supported file text"
+        }
+      },
+      {
+        "apiName": "max_chars",
+        "name": "maxChars",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50000
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Max Chars",
+          "name": "maxChars",
+          "type": "number",
+          "default": 0,
+          "description": "Value for max chars",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": 1,
+            "maxValue": 50000
+          }
+        }
+      },
+      {
+        "apiName": "offset_lines",
+        "name": "offsetLines",
+        "schema": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Offset Lines",
+          "name": "offsetLines",
+          "type": "number",
+          "default": 0,
+          "description": "Value for offset lines",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": 0,
+            "maxValue": 1000000
+          }
+        }
+      }
+    ]
+  },
+  {
+    "path": "/messages/photo",
+    "tool": "telegram_get_photo",
+    "group": "Chats & groups",
+    "summary": "Get an archived photo",
+    "description": "Return photo data and metadata through Telepath's existing media loader. Rendering or image understanding depends on the client; this is not an image-analysis endpoint.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "chat_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "message_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "chat_id",
+        "message_id"
+      ],
+      "additionalProperties": false
+    },
+    "feature": "media",
+    "write": false,
+    "channelAllowed": true,
+    "method": "POST",
+    "resource": "media",
+    "fields": [
+      {
+        "apiName": "chat_id",
+        "name": "chatId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Chat ID",
+          "name": "chatId",
+          "type": "number",
+          "default": 0,
+          "description": "Chat ID returned by a Telepath chat operation. Bot inbox operations use their separate inbox IDs.",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "message_id",
+        "name": "messageId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Message ID",
+          "name": "messageId",
+          "type": "number",
+          "default": 0,
+          "description": "Message ID returned by Telepath",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      }
+    ]
+  },
+  {
+    "path": "/messages/send-media",
+    "tool": "telegram_send_media",
+    "group": "Chats & groups",
+    "summary": "Send a photo or document",
+    "description": "Confirm recipient and media before sending. Supply exactly one source: public HTTP(S) URL or from_chat_id plus from_message_id in your archive. Private messages use Business permissions; groups send as the bot. Never retry automatically after uncertain delivery.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "chat_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "from_chat_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "from_message_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https?:\\/\\/"
+        },
+        "caption": {
+          "type": "string",
+          "maxLength": 1024
+        },
+        "as_document": {
+          "type": "boolean"
+        },
+        "reply_to_message_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "message_thread_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "additionalProperties": false
+    },
+    "feature": "send",
+    "write": true,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "media",
+    "fields": [
+      {
+        "apiName": "chat_id",
+        "name": "chatId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Chat ID",
+          "name": "chatId",
+          "type": "number",
+          "default": 0,
+          "description": "Chat ID returned by a Telepath chat operation. Bot inbox operations use their separate inbox IDs.",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "from_chat_id",
+        "name": "fromChatId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Source Chat ID",
+          "name": "fromChatId",
+          "type": "number",
+          "default": 0,
+          "description": "Value for from chat id",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          }
+        }
+      },
+      {
+        "apiName": "from_message_id",
+        "name": "fromMessageId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Source Message ID",
+          "name": "fromMessageId",
+          "type": "number",
+          "default": 0,
+          "description": "Value for from message id",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          }
+        }
+      },
+      {
+        "apiName": "url",
+        "name": "url",
+        "schema": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https?:\\/\\/"
+        },
+        "required": false,
+        "ui": {
+          "displayName": "URL",
+          "name": "url",
+          "type": "string",
+          "default": "",
+          "description": "Value for url"
+        }
+      },
+      {
+        "apiName": "caption",
+        "name": "caption",
+        "schema": {
+          "type": "string",
+          "maxLength": 1024
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Caption",
+          "name": "caption",
+          "type": "string",
+          "default": "",
+          "description": "Value for caption",
+          "typeOptions": {
+            "rows": 4
+          }
+        }
+      },
+      {
+        "apiName": "as_document",
+        "name": "asDocument",
+        "schema": {
+          "type": "boolean"
+        },
+        "required": false,
+        "ui": {
+          "displayName": "As Document",
+          "name": "asDocument",
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to send the media as a document"
+        }
+      },
+      {
+        "apiName": "reply_to_message_id",
+        "name": "replyToMessageId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Reply To Message Id",
+          "name": "replyToMessageId",
+          "type": "number",
+          "default": 0,
+          "description": "Value for reply to message id",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          }
+        }
+      },
+      {
+        "apiName": "message_thread_id",
+        "name": "messageThreadId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Message Thread Id",
+          "name": "messageThreadId",
+          "type": "number",
+          "default": 0,
+          "description": "Value for message thread id",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          }
+        }
+      }
+    ]
+  },
+  {
+    "path": "/messages/edit",
+    "tool": "telegram_edit_message",
+    "group": "Chats & groups",
+    "summary": "Edit a sent message",
+    "description": "Confirm the exact replacement and recipient. Only eligible outgoing messages can be edited. Use dedicated post tools for channel posts.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "chat_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "message_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "chat_id",
+        "message_id",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "feature": "send",
+    "write": true,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "chat",
+    "fields": [
+      {
+        "apiName": "chat_id",
+        "name": "chatId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Chat ID",
+          "name": "chatId",
+          "type": "number",
+          "default": 0,
+          "description": "Chat ID returned by a Telepath chat operation. Bot inbox operations use their separate inbox IDs.",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "message_id",
+        "name": "messageId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Message ID",
+          "name": "messageId",
+          "type": "number",
+          "default": 0,
+          "description": "Message ID returned by Telepath",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "text",
+        "name": "text",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Text",
+          "name": "text",
+          "type": "string",
+          "default": "",
+          "description": "Value for text",
+          "typeOptions": {
+            "rows": 4
+          },
+          "required": true
+        }
+      }
+    ]
+  },
+  {
+    "path": "/messages/mark-read",
+    "tool": "telegram_mark_read",
+    "group": "Chats & groups",
+    "summary": "Mark a conversation read",
+    "description": "Mark a Business conversation read through Telegram, up to the given message or the newest known message. This changes the unread state; ordinary archive reads do not.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "chat_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "message_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "additionalProperties": false
+    },
+    "feature": "send",
+    "write": true,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "chat",
+    "fields": [
+      {
+        "apiName": "chat_id",
+        "name": "chatId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Chat ID",
+          "name": "chatId",
+          "type": "number",
+          "default": 0,
+          "description": "Chat ID returned by a Telepath chat operation. Bot inbox operations use their separate inbox IDs.",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "message_id",
+        "name": "messageId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Message ID",
+          "name": "messageId",
+          "type": "number",
+          "default": 0,
+          "description": "Message ID returned by Telepath",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          }
+        }
+      }
+    ]
+  },
+  {
+    "path": "/messages/reaction",
+    "tool": "telegram_set_reaction",
+    "group": "Chats & groups",
+    "summary": "Set or remove a reaction",
+    "description": "Confirm the target and emoji. Reacts as the bot in supported groups or authorized connected channels; private Business reactions are unsupported. Omit emoji to remove the bot's reaction.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "chat_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "message_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "emoji": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "big": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "chat_id",
+        "message_id"
+      ],
+      "additionalProperties": false
+    },
+    "feature": "send",
+    "write": true,
+    "channelAllowed": true,
+    "method": "POST",
+    "resource": "chat",
+    "fields": [
+      {
+        "apiName": "chat_id",
+        "name": "chatId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Chat ID",
+          "name": "chatId",
+          "type": "number",
+          "default": 0,
+          "description": "Chat ID returned by a Telepath chat operation. Bot inbox operations use their separate inbox IDs.",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "message_id",
+        "name": "messageId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Message ID",
+          "name": "messageId",
+          "type": "number",
+          "default": 0,
+          "description": "Message ID returned by Telepath",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "emoji",
+        "name": "emoji",
+        "schema": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Emoji",
+          "name": "emoji",
+          "type": "string",
+          "default": "",
+          "description": "Reaction emoji. Omit this field to remove the bot’s reaction."
+        }
+      },
+      {
+        "apiName": "big",
+        "name": "big",
+        "schema": {
+          "type": "boolean"
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Big",
+          "name": "big",
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to use a large reaction animation"
+        }
+      }
+    ]
+  },
+  {
+    "path": "/notes/search",
+    "tool": "kb_search_notes",
+    "group": "Notes",
+    "summary": "Search notes",
+    "description": "Search this account's Notes. Empty query lists recent notes. Optionally filter by tag.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "tag": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false
+    },
+    "feature": "notes",
+    "write": false,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "note",
+    "fields": [
+      {
+        "apiName": "query",
+        "name": "query",
+        "schema": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Query",
+          "name": "query",
+          "type": "string",
+          "default": "",
+          "description": "Value for query",
+          "required": true
+        }
+      },
+      {
+        "apiName": "tag",
+        "name": "tag",
+        "schema": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Tag",
+          "name": "tag",
+          "type": "string",
+          "default": "",
+          "description": "Value for tag"
+        }
+      },
+      {
+        "apiName": "limit",
+        "name": "limit",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Limit",
+          "name": "limit",
+          "type": "number",
+          "default": 50,
+          "description": "Max number of results to return",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": 1,
+            "maxValue": 100
+          }
+        }
+      }
+    ]
+  },
+  {
+    "path": "/notes/get",
+    "tool": "kb_get_note",
+    "group": "Notes",
+    "summary": "Read a note",
+    "description": "Read one note, task, project or person with links and backlinks. Supply its ID or exact title.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      },
+      "additionalProperties": false
+    },
+    "feature": "notes",
+    "write": false,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "note",
+    "fields": [
+      {
+        "apiName": "id",
+        "name": "id",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "required": false,
+        "ui": {
+          "displayName": "ID",
+          "name": "id",
+          "type": "number",
+          "default": 0,
+          "description": "Value for id",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          }
+        }
+      },
+      {
+        "apiName": "title",
+        "name": "title",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Title",
+          "name": "title",
+          "type": "string",
+          "default": "",
+          "description": "Note title; use ID to identify an existing note when renaming"
+        }
+      }
+    ]
+  },
+  {
+    "path": "/notes/list",
+    "tool": "kb_list_notes",
+    "group": "Notes",
+    "summary": "List notes",
+    "description": "List recent notes, tasks and projects. Filter by tag when needed.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "tag": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        }
+      },
+      "additionalProperties": false
+    },
+    "feature": "notes",
+    "write": false,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "note",
+    "fields": [
+      {
+        "apiName": "tag",
+        "name": "tag",
+        "schema": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Tag",
+          "name": "tag",
+          "type": "string",
+          "default": "",
+          "description": "Value for tag"
+        }
+      },
+      {
+        "apiName": "limit",
+        "name": "limit",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Limit",
+          "name": "limit",
+          "type": "number",
+          "default": 50,
+          "description": "Max number of results to return",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": 1,
+            "maxValue": 200
+          }
+        }
+      }
+    ]
+  },
+  {
+    "path": "/notes/create",
+    "tool": "kb_create_note",
+    "group": "Notes",
+    "summary": "Create a note or task",
+    "description": "Save user-authorized content. Titles are unique; use [[Title]] links and tags. Types: note, project, person, task. Only explicitly authorized reminders on open tasks may be scheduled. A quota failure means the save did not happen. Search before creating duplicates.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "body": {
+          "type": "string",
+          "maxLength": 50000
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "maxItems": 100
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "note",
+            "project",
+            "person",
+            "task"
+          ]
+        },
+        "task_status": {
+          "type": "string",
+          "enum": [
+            "open",
+            "done"
+          ]
+        },
+        "reminder": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1500
+                },
+                "at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "timezone": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                }
+              },
+              "required": [
+                "text",
+                "at",
+                "timezone"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "additionalProperties": false
+    },
+    "feature": "notes",
+    "write": true,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "note",
+    "fields": [
+      {
+        "apiName": "title",
+        "name": "title",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Title",
+          "name": "title",
+          "type": "string",
+          "default": "",
+          "description": "Note title; use ID to identify an existing note when renaming",
+          "required": true
+        }
+      },
+      {
+        "apiName": "body",
+        "name": "body",
+        "schema": {
+          "type": "string",
+          "maxLength": 50000
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Body",
+          "name": "body",
+          "type": "string",
+          "default": "",
+          "description": "Value for body",
+          "typeOptions": {
+            "rows": 4
+          }
+        }
+      },
+      {
+        "apiName": "tags",
+        "name": "tags",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "maxItems": 100
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Tags",
+          "name": "tags",
+          "type": "json",
+          "default": "[]",
+          "description": "JSON array of tags, for example [\"work\"]"
+        }
+      },
+      {
+        "apiName": "type",
+        "name": "type",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "note",
+            "project",
+            "person",
+            "task"
+          ]
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Type",
+          "name": "type",
+          "type": "options",
+          "default": "note",
+          "description": "Value for type",
+          "options": [
+            {
+              "name": "Note",
+              "value": "note"
+            },
+            {
+              "name": "Person",
+              "value": "person"
+            },
+            {
+              "name": "Project",
+              "value": "project"
+            },
+            {
+              "name": "Task",
+              "value": "task"
+            }
+          ]
+        }
+      },
+      {
+        "apiName": "task_status",
+        "name": "taskStatus",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "open",
+            "done"
+          ]
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Task Status",
+          "name": "taskStatus",
+          "type": "options",
+          "default": "open",
+          "description": "Value for task status",
+          "options": [
+            {
+              "name": "Done",
+              "value": "done"
+            },
+            {
+              "name": "Open",
+              "value": "open"
+            }
+          ]
+        }
+      },
+      {
+        "apiName": "reminder",
+        "name": "reminder",
+        "schema": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1500
+                },
+                "at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "timezone": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                }
+              },
+              "required": [
+                "text",
+                "at",
+                "timezone"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Reminder",
+          "name": "reminder",
+          "type": "json",
+          "default": "null",
+          "description": "JSON with text, at (ISO 8601) and timezone. Use null to cancel an existing task reminder."
+        }
+      }
+    ]
+  },
+  {
+    "path": "/notes/update",
+    "tool": "kb_update_note",
+    "group": "Notes",
+    "summary": "Update a note or task",
+    "description": "Read before editing. Use ID when renaming; otherwise title addresses the existing note. Omitted fields are preserved, append adds body text, tags replaces tags. reminder:null cancels; completing a task cancels its reminder. Confirm destructive replacements. Do not automatically retry append operations.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "body": {
+          "type": "string",
+          "maxLength": 50000
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "maxItems": 100
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "note",
+            "project",
+            "person",
+            "task"
+          ]
+        },
+        "task_status": {
+          "type": "string",
+          "enum": [
+            "open",
+            "done"
+          ]
+        },
+        "reminder": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1500
+                },
+                "at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "timezone": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                }
+              },
+              "required": [
+                "text",
+                "at",
+                "timezone"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "append": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "feature": "notes",
+    "write": true,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "note",
+    "fields": [
+      {
+        "apiName": "id",
+        "name": "id",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "required": false,
+        "ui": {
+          "displayName": "ID",
+          "name": "id",
+          "type": "number",
+          "default": 0,
+          "description": "Value for id",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          }
+        }
+      },
+      {
+        "apiName": "title",
+        "name": "title",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Title",
+          "name": "title",
+          "type": "string",
+          "default": "",
+          "description": "Note title; use ID to identify an existing note when renaming"
+        }
+      },
+      {
+        "apiName": "body",
+        "name": "body",
+        "schema": {
+          "type": "string",
+          "maxLength": 50000
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Body",
+          "name": "body",
+          "type": "string",
+          "default": "",
+          "description": "Value for body",
+          "typeOptions": {
+            "rows": 4
+          }
+        }
+      },
+      {
+        "apiName": "tags",
+        "name": "tags",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "maxItems": 100
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Tags",
+          "name": "tags",
+          "type": "json",
+          "default": "[]",
+          "description": "JSON array of tags, for example [\"work\"]"
+        }
+      },
+      {
+        "apiName": "type",
+        "name": "type",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "note",
+            "project",
+            "person",
+            "task"
+          ]
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Type",
+          "name": "type",
+          "type": "options",
+          "default": "note",
+          "description": "Value for type",
+          "options": [
+            {
+              "name": "Note",
+              "value": "note"
+            },
+            {
+              "name": "Person",
+              "value": "person"
+            },
+            {
+              "name": "Project",
+              "value": "project"
+            },
+            {
+              "name": "Task",
+              "value": "task"
+            }
+          ]
+        }
+      },
+      {
+        "apiName": "task_status",
+        "name": "taskStatus",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "open",
+            "done"
+          ]
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Task Status",
+          "name": "taskStatus",
+          "type": "options",
+          "default": "open",
+          "description": "Value for task status",
+          "options": [
+            {
+              "name": "Done",
+              "value": "done"
+            },
+            {
+              "name": "Open",
+              "value": "open"
+            }
+          ]
+        }
+      },
+      {
+        "apiName": "reminder",
+        "name": "reminder",
+        "schema": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1500
+                },
+                "at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "timezone": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                }
+              },
+              "required": [
+                "text",
+                "at",
+                "timezone"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Reminder",
+          "name": "reminder",
+          "type": "json",
+          "default": "null",
+          "description": "JSON with text, at (ISO 8601) and timezone. Use null to cancel an existing task reminder."
+        }
+      },
+      {
+        "apiName": "append",
+        "name": "append",
+        "schema": {
+          "type": "boolean"
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Append",
+          "name": "append",
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to append to the existing note body"
+        }
+      }
+    ]
+  },
+  {
+    "path": "/notes/delete",
+    "tool": "kb_delete_note",
+    "group": "Notes",
+    "summary": "Delete a note",
+    "description": "Permanently delete the chosen note after user confirmation. Also cancels its task reminder. Supply ID or exact title.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      },
+      "additionalProperties": false
+    },
+    "feature": "notes",
+    "write": true,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "note",
+    "fields": [
+      {
+        "apiName": "id",
+        "name": "id",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "required": false,
+        "ui": {
+          "displayName": "ID",
+          "name": "id",
+          "type": "number",
+          "default": 0,
+          "description": "Value for id",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          }
+        }
+      },
+      {
+        "apiName": "title",
+        "name": "title",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Title",
+          "name": "title",
+          "type": "string",
+          "default": "",
+          "description": "Note title; use ID to identify an existing note when renaming"
+        }
+      }
+    ]
+  },
+  {
+    "path": "/reminders/create",
+    "tool": "create_reminder",
+    "group": "Reminders",
+    "summary": "Create a reminder",
+    "description": "Schedule a one-time reminder only to the authenticated account owner. Clarify time, timezone and text; only schedule when authorized. Reuse request_id and identical details on retry. Creation allowance is shared with task reminders. Scheduled does not mean delivered.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1500
+        },
+        "at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 100,
+          "pattern": "^[-a-zA-Z0-9_]+$"
+        }
+      },
+      "required": [
+        "text",
+        "at",
+        "timezone"
+      ],
+      "additionalProperties": false
+    },
+    "feature": "notes",
+    "write": true,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "reminder",
+    "fields": [
+      {
+        "apiName": "text",
+        "name": "text",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1500
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Text",
+          "name": "text",
+          "type": "string",
+          "default": "",
+          "description": "Value for text",
+          "typeOptions": {
+            "rows": 4
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "at",
+        "name": "at",
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Scheduled Time",
+          "name": "at",
+          "type": "string",
+          "default": "",
+          "description": "Future ISO 8601 date and time including Z or UTC offset",
+          "required": true
+        }
+      },
+      {
+        "apiName": "timezone",
+        "name": "timezone",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Timezone",
+          "name": "timezone",
+          "type": "string",
+          "default": "",
+          "description": "IANA timezone, for example Europe/Berlin",
+          "required": true
+        }
+      },
+      {
+        "apiName": "request_id",
+        "name": "requestId",
+        "schema": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 100,
+          "pattern": "^[-a-zA-Z0-9_]+$"
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Request ID",
+          "name": "requestId",
+          "type": "string",
+          "default": "",
+          "description": "Unique action identifier (8–100 letters, digits, hyphens or underscores). Reuse it only for the identical action."
+        }
+      }
+    ]
+  },
+  {
+    "path": "/reminders/list",
+    "tool": "list_reminders",
+    "group": "Reminders",
+    "summary": "List reminders",
+    "description": "List standalone/task reminders and delivery states. Available regardless of remaining creation allowance. By default excludes done/cancelled. Uncertain is not delivered.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "scheduled",
+            "sending",
+            "delivered",
+            "failed",
+            "uncertain",
+            "cancelled",
+            "done"
+          ]
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        }
+      },
+      "additionalProperties": false
+    },
+    "feature": "reminders",
+    "write": false,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "reminder",
+    "fields": [
+      {
+        "apiName": "status",
+        "name": "status",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "scheduled",
+            "sending",
+            "delivered",
+            "failed",
+            "uncertain",
+            "cancelled",
+            "done"
+          ]
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Status",
+          "name": "status",
+          "type": "options",
+          "default": "scheduled",
+          "description": "Value for status",
+          "options": [
+            {
+              "name": "Cancelled",
+              "value": "cancelled"
+            },
+            {
+              "name": "Delivered",
+              "value": "delivered"
+            },
+            {
+              "name": "Done",
+              "value": "done"
+            },
+            {
+              "name": "Failed",
+              "value": "failed"
+            },
+            {
+              "name": "Scheduled",
+              "value": "scheduled"
+            },
+            {
+              "name": "Sending",
+              "value": "sending"
+            },
+            {
+              "name": "Uncertain",
+              "value": "uncertain"
+            }
+          ]
+        }
+      },
+      {
+        "apiName": "limit",
+        "name": "limit",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Limit",
+          "name": "limit",
+          "type": "number",
+          "default": 50,
+          "description": "Max number of results to return",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": 1,
+            "maxValue": 100
+          }
+        }
+      },
+      {
+        "apiName": "offset",
+        "name": "offset",
+        "schema": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Offset",
+          "name": "offset",
+          "type": "number",
+          "default": 0,
+          "description": "Number of results to skip",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": 0,
+            "maxValue": 1000000
+          }
+        }
+      }
+    ]
+  },
+  {
+    "path": "/reminders/cancel",
+    "tool": "cancel_reminder",
+    "group": "Reminders",
+    "summary": "Cancel a reminder",
+    "description": "Cancel by reminder ID at the owner's request; preserves linked task. Available even when Notes creation is disabled or allowance is exhausted. Cancellation does not restore creation allowance or recall an already sent message.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false
+    },
+    "feature": "reminders",
+    "write": true,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "reminder",
+    "fields": [
+      {
+        "apiName": "id",
+        "name": "id",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "required": true,
+        "ui": {
+          "displayName": "ID",
+          "name": "id",
+          "type": "string",
+          "default": "",
+          "description": "Value for id",
+          "required": true
+        }
+      }
+    ]
+  },
+  {
+    "path": "/channels/posts/create",
+    "tool": "telegram_create_post",
+    "group": "Channels",
+    "summary": "Publish a channel post",
+    "description": "Broadcast to a connected channel you currently own. Show channel, text, all media and button destinations and obtain explicit confirmation. Supports text, one photo/document, or 2–10 album items. Albums cannot have buttons or mix documents with photo/video. Captions max 1024. Requires bot Post messages permission. Reuse request_id for identical retries; never retry uncertain delivery with a new ID.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "channel_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMaximum": 0
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 100,
+          "pattern": "^[-a-zA-Z0-9_]+$"
+        },
+        "confirmed": {
+          "type": "boolean",
+          "const": true
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "media": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "photo",
+                "document"
+              ]
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https\\:\\/\\/"
+            }
+          },
+          "required": [
+            "type",
+            "url"
+          ],
+          "additionalProperties": false
+        },
+        "buttons": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https\\:\\/\\/"
+                }
+              },
+              "required": [
+                "text",
+                "url"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 4
+          },
+          "maxItems": 5
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "plain",
+            "HTML"
+          ]
+        },
+        "album": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "photo",
+                  "video",
+                  "document"
+                ]
+              },
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "pattern": "^https\\:\\/\\/"
+              }
+            },
+            "required": [
+              "type",
+              "url"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 2,
+          "maxItems": 10
+        }
+      },
+      "required": [
+        "channel_id",
+        "request_id",
+        "confirmed"
+      ],
+      "additionalProperties": false
+    },
+    "feature": "channels",
+    "write": true,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "channel",
+    "fields": [
+      {
+        "apiName": "channel_id",
+        "name": "channelId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMaximum": 0
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Channel ID",
+          "name": "channelId",
+          "type": "number",
+          "default": 0,
+          "description": "Negative channel ID returned by Telepath",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "request_id",
+        "name": "requestId",
+        "schema": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 100,
+          "pattern": "^[-a-zA-Z0-9_]+$"
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Request ID",
+          "name": "requestId",
+          "type": "string",
+          "default": "",
+          "description": "Unique action identifier (8–100 letters, digits, hyphens or underscores). Reuse it only for the identical action.",
+          "required": true
+        }
+      },
+      {
+        "apiName": "confirmed",
+        "name": "confirmed",
+        "schema": {
+          "type": "boolean",
+          "const": true
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Confirm Action",
+          "name": "confirmed",
+          "type": "boolean",
+          "default": false,
+          "description": "Whether you authorize this exact action and target",
+          "required": true
+        }
+      },
+      {
+        "apiName": "text",
+        "name": "text",
+        "schema": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Text",
+          "name": "text",
+          "type": "string",
+          "default": "",
+          "description": "Value for text",
+          "typeOptions": {
+            "rows": 4
+          }
+        }
+      },
+      {
+        "apiName": "media",
+        "name": "media",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "photo",
+                "document"
+              ]
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https\\:\\/\\/"
+            }
+          },
+          "required": [
+            "type",
+            "url"
+          ],
+          "additionalProperties": false
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Media",
+          "name": "media",
+          "type": "json",
+          "default": "{}",
+          "description": "JSON object with type (photo or document) and HTTPS url"
+        }
+      },
+      {
+        "apiName": "buttons",
+        "name": "buttons",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https\\:\\/\\/"
+                }
+              },
+              "required": [
+                "text",
+                "url"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 4
+          },
+          "maxItems": 5
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Buttons",
+          "name": "buttons",
+          "type": "json",
+          "default": "[]",
+          "description": "JSON rows of buttons, each with text and an HTTPS url"
+        }
+      },
+      {
+        "apiName": "format",
+        "name": "format",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "plain",
+            "HTML"
+          ]
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Format",
+          "name": "format",
+          "type": "options",
+          "default": "plain",
+          "description": "Value for format",
+          "options": [
+            {
+              "name": "HTML",
+              "value": "HTML"
+            },
+            {
+              "name": "Plain",
+              "value": "plain"
+            }
+          ]
+        }
+      },
+      {
+        "apiName": "album",
+        "name": "album",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "photo",
+                  "video",
+                  "document"
+                ]
+              },
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "pattern": "^https\\:\\/\\/"
+              }
+            },
+            "required": [
+              "type",
+              "url"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 2,
+          "maxItems": 10
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Album",
+          "name": "album",
+          "type": "json",
+          "default": "[]",
+          "description": "JSON array of photo/document objects with type and HTTPS url"
+        }
+      }
+    ]
+  },
+  {
+    "path": "/channels/posts/edit",
+    "tool": "telegram_edit_post",
+    "group": "Channels",
+    "summary": "Edit a channel post",
+    "description": "Read first, confirm channel and exact replacement. Omitted fields are preserved; empty buttons removes them. Requires current ownership and bot Edit messages permission. Targets one album item, not the whole album. Reuse request_id on identical retry.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "channel_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMaximum": 0
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 100,
+          "pattern": "^[-a-zA-Z0-9_]+$"
+        },
+        "confirmed": {
+          "type": "boolean",
+          "const": true
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "media": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "photo",
+                "document"
+              ]
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https\\:\\/\\/"
+            }
+          },
+          "required": [
+            "type",
+            "url"
+          ],
+          "additionalProperties": false
+        },
+        "buttons": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https\\:\\/\\/"
+                }
+              },
+              "required": [
+                "text",
+                "url"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 4
+          },
+          "maxItems": 5
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "plain",
+            "HTML"
+          ]
+        },
+        "message_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "channel_id",
+        "request_id",
+        "confirmed",
+        "message_id"
+      ],
+      "additionalProperties": false
+    },
+    "feature": "channels",
+    "write": true,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "channel",
+    "fields": [
+      {
+        "apiName": "channel_id",
+        "name": "channelId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMaximum": 0
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Channel ID",
+          "name": "channelId",
+          "type": "number",
+          "default": 0,
+          "description": "Negative channel ID returned by Telepath",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "request_id",
+        "name": "requestId",
+        "schema": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 100,
+          "pattern": "^[-a-zA-Z0-9_]+$"
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Request ID",
+          "name": "requestId",
+          "type": "string",
+          "default": "",
+          "description": "Unique action identifier (8–100 letters, digits, hyphens or underscores). Reuse it only for the identical action.",
+          "required": true
+        }
+      },
+      {
+        "apiName": "confirmed",
+        "name": "confirmed",
+        "schema": {
+          "type": "boolean",
+          "const": true
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Confirm Action",
+          "name": "confirmed",
+          "type": "boolean",
+          "default": false,
+          "description": "Whether you authorize this exact action and target",
+          "required": true
+        }
+      },
+      {
+        "apiName": "text",
+        "name": "text",
+        "schema": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Text",
+          "name": "text",
+          "type": "string",
+          "default": "",
+          "description": "Value for text",
+          "typeOptions": {
+            "rows": 4
+          }
+        }
+      },
+      {
+        "apiName": "media",
+        "name": "media",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "photo",
+                "document"
+              ]
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https\\:\\/\\/"
+            }
+          },
+          "required": [
+            "type",
+            "url"
+          ],
+          "additionalProperties": false
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Media",
+          "name": "media",
+          "type": "json",
+          "default": "{}",
+          "description": "JSON object with type (photo or document) and HTTPS url"
+        }
+      },
+      {
+        "apiName": "buttons",
+        "name": "buttons",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https\\:\\/\\/"
+                }
+              },
+              "required": [
+                "text",
+                "url"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 4
+          },
+          "maxItems": 5
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Buttons",
+          "name": "buttons",
+          "type": "json",
+          "default": "[]",
+          "description": "JSON rows of buttons, each with text and an HTTPS url"
+        }
+      },
+      {
+        "apiName": "format",
+        "name": "format",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "plain",
+            "HTML"
+          ]
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Format",
+          "name": "format",
+          "type": "options",
+          "default": "plain",
+          "description": "Value for format",
+          "options": [
+            {
+              "name": "HTML",
+              "value": "HTML"
+            },
+            {
+              "name": "Plain",
+              "value": "plain"
+            }
+          ]
+        }
+      },
+      {
+        "apiName": "message_id",
+        "name": "messageId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Message ID",
+          "name": "messageId",
+          "type": "number",
+          "default": 0,
+          "description": "Message ID returned by Telepath",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      }
+    ]
+  },
+  {
+    "path": "/channels/posts/delete",
+    "tool": "telegram_delete_post",
+    "group": "Channels",
+    "summary": "Delete a channel post",
+    "description": "Permanently delete one archived post from Telegram after confirmation. Requires current ownership and bot Delete messages permission, subject to Telegram's deletion window. Not an archive-only delete. Reuse request_id on identical retry.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "channel_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMaximum": 0
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 100,
+          "pattern": "^[-a-zA-Z0-9_]+$"
+        },
+        "confirmed": {
+          "type": "boolean",
+          "const": true
+        },
+        "message_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "channel_id",
+        "request_id",
+        "confirmed",
+        "message_id"
+      ],
+      "additionalProperties": false
+    },
+    "feature": "channels",
+    "write": true,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "channel",
+    "fields": [
+      {
+        "apiName": "channel_id",
+        "name": "channelId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMaximum": 0
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Channel ID",
+          "name": "channelId",
+          "type": "number",
+          "default": 0,
+          "description": "Negative channel ID returned by Telepath",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "request_id",
+        "name": "requestId",
+        "schema": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 100,
+          "pattern": "^[-a-zA-Z0-9_]+$"
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Request ID",
+          "name": "requestId",
+          "type": "string",
+          "default": "",
+          "description": "Unique action identifier (8–100 letters, digits, hyphens or underscores). Reuse it only for the identical action.",
+          "required": true
+        }
+      },
+      {
+        "apiName": "confirmed",
+        "name": "confirmed",
+        "schema": {
+          "type": "boolean",
+          "const": true
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Confirm Action",
+          "name": "confirmed",
+          "type": "boolean",
+          "default": false,
+          "description": "Whether you authorize this exact action and target",
+          "required": true
+        }
+      },
+      {
+        "apiName": "message_id",
+        "name": "messageId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Message ID",
+          "name": "messageId",
+          "type": "number",
+          "default": 0,
+          "description": "Message ID returned by Telepath",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      }
+    ]
+  },
+  {
+    "path": "/channels/posts/pin",
+    "tool": "telegram_set_post_pinned",
+    "group": "Channels",
+    "summary": "Pin or unpin a channel post",
+    "description": "Confirm the channel, post and desired state. Pin/unpin this specific post only; requires current ownership and bot Edit messages permission. Reuse request_id on identical retry.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "channel_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMaximum": 0
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 100,
+          "pattern": "^[-a-zA-Z0-9_]+$"
+        },
+        "confirmed": {
+          "type": "boolean",
+          "const": true
+        },
+        "message_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "pinned": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "channel_id",
+        "request_id",
+        "confirmed",
+        "message_id",
+        "pinned"
+      ],
+      "additionalProperties": false
+    },
+    "feature": "channels",
+    "write": true,
+    "channelAllowed": false,
+    "method": "POST",
+    "resource": "channel",
+    "fields": [
+      {
+        "apiName": "channel_id",
+        "name": "channelId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMaximum": 0
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Channel ID",
+          "name": "channelId",
+          "type": "number",
+          "default": 0,
+          "description": "Negative channel ID returned by Telepath",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "request_id",
+        "name": "requestId",
+        "schema": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 100,
+          "pattern": "^[-a-zA-Z0-9_]+$"
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Request ID",
+          "name": "requestId",
+          "type": "string",
+          "default": "",
+          "description": "Unique action identifier (8–100 letters, digits, hyphens or underscores). Reuse it only for the identical action.",
+          "required": true
+        }
+      },
+      {
+        "apiName": "confirmed",
+        "name": "confirmed",
+        "schema": {
+          "type": "boolean",
+          "const": true
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Confirm Action",
+          "name": "confirmed",
+          "type": "boolean",
+          "default": false,
+          "description": "Whether you authorize this exact action and target",
+          "required": true
+        }
+      },
+      {
+        "apiName": "message_id",
+        "name": "messageId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "exclusiveMinimum": 0
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Message ID",
+          "name": "messageId",
+          "type": "number",
+          "default": 0,
+          "description": "Message ID returned by Telepath",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "pinned",
+        "name": "pinned",
+        "schema": {
+          "type": "boolean"
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Pinned",
+          "name": "pinned",
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the post should be pinned",
+          "required": true
+        }
+      }
+    ]
+  },
+  {
+    "path": "/chats/search",
+    "tool": "telegram_find_chat",
+    "summary": "Find a chat",
+    "description": "Find a chat in the authenticated account’s Telepath archive.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false
+    },
+    "write": false,
+    "feature": "read",
+    "group": "Chats & groups",
+    "method": "GET",
+    "resource": "chat",
+    "fields": [
+      {
+        "apiName": "query",
+        "name": "query",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Query",
+          "name": "query",
+          "type": "string",
+          "default": "",
+          "description": "Value for query",
+          "required": true
+        }
+      },
+      {
+        "apiName": "limit",
+        "name": "limit",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Limit",
+          "name": "limit",
+          "type": "number",
+          "default": 50,
+          "description": "Max number of results to return",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": 1,
+            "maxValue": 100
+          }
+        }
+      }
+    ]
+  },
+  {
+    "path": "/messages/search",
+    "tool": "telegram_search_messages",
+    "summary": "Search messages",
+    "description": "Search messages in the authenticated account’s Telepath archive.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "chat_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "since": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false
+    },
+    "write": false,
+    "feature": "read",
+    "group": "Chats & groups",
+    "method": "GET",
+    "resource": "chat",
+    "fields": [
+      {
+        "apiName": "query",
+        "name": "query",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Query",
+          "name": "query",
+          "type": "string",
+          "default": "",
+          "description": "Value for query",
+          "required": true
+        }
+      },
+      {
+        "apiName": "chat_id",
+        "name": "chatId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Chat ID",
+          "name": "chatId",
+          "type": "number",
+          "default": 0,
+          "description": "Chat ID returned by a Telepath chat operation. Bot inbox operations use their separate inbox IDs.",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          }
+        }
+      },
+      {
+        "apiName": "since",
+        "name": "since",
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Since",
+          "name": "since",
+          "type": "string",
+          "default": "",
+          "description": "ISO 8601 date and time including Z or UTC offset"
+        }
+      },
+      {
+        "apiName": "limit",
+        "name": "limit",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Limit",
+          "name": "limit",
+          "type": "number",
+          "default": 50,
+          "description": "Max number of results to return",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": 1,
+            "maxValue": 200
+          }
+        }
+      }
+    ]
+  },
+  {
+    "path": "/chats/{chat_id}/messages",
+    "tool": "telegram_get_messages",
+    "summary": "Read chat messages",
+    "description": "Read chat messages in the authenticated account’s Telepath archive.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "chat_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "before": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "since": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "additionalProperties": false
+    },
+    "write": false,
+    "feature": "read",
+    "group": "Chats & groups",
+    "method": "GET",
+    "resource": "chat",
+    "fields": [
+      {
+        "apiName": "chat_id",
+        "name": "chatId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Chat ID",
+          "name": "chatId",
+          "type": "number",
+          "default": 0,
+          "description": "Chat ID returned by a Telepath chat operation. Bot inbox operations use their separate inbox IDs.",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "before",
+        "name": "before",
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Before",
+          "name": "before",
+          "type": "string",
+          "default": "",
+          "description": "ISO 8601 date and time including Z or UTC offset"
+        }
+      },
+      {
+        "apiName": "since",
+        "name": "since",
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Since",
+          "name": "since",
+          "type": "string",
+          "default": "",
+          "description": "ISO 8601 date and time including Z or UTC offset"
+        }
+      },
+      {
+        "apiName": "limit",
+        "name": "limit",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Limit",
+          "name": "limit",
+          "type": "number",
+          "default": 50,
+          "description": "Max number of results to return",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": 1,
+            "maxValue": 200
+          }
+        }
+      }
+    ]
+  },
+  {
+    "path": "/chats/{chat_id}/messages",
+    "tool": "telegram_send_message",
+    "summary": "Send a message",
+    "description": "Send a message in the authenticated account’s Telepath archive.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "chat_id": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "reply_to_message_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "message_thread_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "chat_id",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "write": true,
+    "feature": "send",
+    "group": "Chats & groups",
+    "method": "POST",
+    "resource": "chat",
+    "fields": [
+      {
+        "apiName": "chat_id",
+        "name": "chatId",
+        "schema": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Chat ID",
+          "name": "chatId",
+          "type": "number",
+          "default": 0,
+          "description": "Chat ID returned by a Telepath chat operation. Bot inbox operations use their separate inbox IDs.",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": -9007199254740991,
+            "maxValue": 9007199254740991
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "text",
+        "name": "text",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "required": true,
+        "ui": {
+          "displayName": "Text",
+          "name": "text",
+          "type": "string",
+          "default": "",
+          "description": "Value for text",
+          "typeOptions": {
+            "rows": 4
+          },
+          "required": true
+        }
+      },
+      {
+        "apiName": "reply_to_message_id",
+        "name": "replyToMessageId",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Reply To Message Id",
+          "name": "replyToMessageId",
+          "type": "number",
+          "default": 0,
+          "description": "Value for reply to message id",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": 1,
+            "maxValue": 9007199254740991
+          }
+        }
+      },
+      {
+        "apiName": "message_thread_id",
+        "name": "messageThreadId",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "required": false,
+        "ui": {
+          "displayName": "Message Thread Id",
+          "name": "messageThreadId",
+          "type": "number",
+          "default": 0,
+          "description": "Value for message thread id",
+          "typeOptions": {
+            "numberPrecision": 0,
+            "minValue": 1,
+            "maxValue": 9007199254740991
+          }
+        }
+      }
+    ]
+  }
+]

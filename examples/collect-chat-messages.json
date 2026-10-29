@@ -1,0 +1,326 @@
+{
+  "name": "Telepath — collect chat messages",
+  "nodes": [
+    {
+      "id": "bf18af19-7913-4ad4-817e-30869b97a8c8",
+      "name": "Run manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "52c1b027-1232-4e61-a1f2-2b51926aae4d",
+      "name": "Every 5 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        200
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "e7aeda36-78f0-49bf-9848-4c9f798a169c",
+      "name": "Prepare message table",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        250,
+        0
+      ],
+      "parameters": {
+        "resource": "table",
+        "operation": "create",
+        "tableName": "Telepath chat messages",
+        "columns": {
+          "column": [
+            {
+              "name": "message_key",
+              "type": "string"
+            },
+            {
+              "name": "chat_id",
+              "type": "string"
+            },
+            {
+              "name": "chat_title",
+              "type": "string"
+            },
+            {
+              "name": "message_id",
+              "type": "string"
+            },
+            {
+              "name": "sent_at",
+              "type": "string"
+            },
+            {
+              "name": "sender",
+              "type": "string"
+            },
+            {
+              "name": "direction",
+              "type": "string"
+            },
+            {
+              "name": "text",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "createIfNotExists": true
+        }
+      }
+    },
+    {
+      "id": "5dda0d7a-629e-4b67-a6f1-7c5d40f3cdc0",
+      "name": "Existing collection",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        500,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "={{ $('Prepare message table').first().json.id }}",
+          "mode": "id"
+        },
+        "returnAll": false,
+        "limit": 1,
+        "filters": {
+          "conditions": []
+        },
+        "matchType": "allConditions"
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "9f5fdf0f-bfd1-43ea-bb97-8f0a2768e5aa",
+      "name": "Find available chats",
+      "type": "n8n-nodes-telepath.telepath",
+      "typeVersion": 1,
+      "position": [
+        750,
+        0
+      ],
+      "parameters": {
+        "resource": "chat",
+        "operation": "telegram_list_chats",
+        "additionalFields": {
+          "limit": 20
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "04d4b68c-f7ad-48f5-acd0-6b4d68a694c8",
+      "name": "Choose chat",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const saved = $('Existing collection').first().json;\nconst chats = $input.first().json.chats || [];\nconst first = chats.find(c => c.type !== 'channel' && c.message_count > 0);\nconst id = saved.chat_id || first?.chat_id;\nif (!id) throw new Error('No archived chat messages are available yet. Connect a chat to Telepath and try again after a message arrives.');\nreturn [{json: {chat_id: Number(id)}}];"
+      }
+    },
+    {
+      "id": "56272382-00b8-4b42-a7a2-88c8c1839062",
+      "name": "Read latest messages",
+      "type": "n8n-nodes-telepath.telepath",
+      "typeVersion": 1,
+      "position": [
+        1250,
+        0
+      ],
+      "parameters": {
+        "resource": "chat",
+        "operation": "telegram_get_messages",
+        "chatId": "={{ $json.chat_id }}",
+        "additionalFields": {
+          "limit": 200
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "fc36861d-c521-42c9-aa94-21417b2f9b4a",
+      "name": "Prepare rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1500,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const result = $input.first().json;\nif (!Array.isArray(result.messages)) throw new Error(result.error || 'Telepath did not return messages. Check the connection.');\nreturn result.messages.map(m => ({json: {message_key: `${m.chat_id}:${m.message_id}`, chat_id: String(m.chat_id), chat_title: m.chat_name || result.chat?.name || '', message_id: String(m.message_id), sent_at: m.date || '', sender: [m.from?.first_name,m.from?.last_name].filter(Boolean).join(' ') || m.from?.username || '', direction: m.direction || '', text: m.text || m.caption || m.transcript || `[${m.message_type || 'message'}]`}}));"
+      }
+    },
+    {
+      "id": "11723032-8b29-4509-a785-c26a8e948de7",
+      "name": "Save without duplicates",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1750,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "={{ $('Prepare message table').first().json.id }}",
+          "mode": "id"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "message_key",
+              "condition": "eq",
+              "keyValue": "={{ $json.message_key }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "c179968d-c10f-4b28-bad6-1b53264e6cb9",
+      "name": "How to test",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        250,
+        -400
+      ],
+      "parameters": {
+        "content": "## Telegram chat → table\nSelect your **Telepath OAuth2 API** credential in both Telepath nodes, then click **Execute workflow**. The first available chat is selected automatically and remembered through the saved rows.\n\nOpen **Data tables → Telepath chat messages** to see the result. Run again: existing messages update instead of creating duplicate rows.\n\nTelegram is read-only. The 5-minute schedule runs only after you publish this workflow.\n\nThis test checks the latest **200** messages on each run. It does not guarantee complete capture after a long gap or a burst of over 200 messages. The table stays in your n8n instance until you delete it.",
+        "height": 330,
+        "width": 650
+      }
+    }
+  ],
+  "connections": {
+    "Run manually": {
+      "main": [
+        [
+          {
+            "node": "Prepare message table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every 5 minutes": {
+      "main": [
+        [
+          {
+            "node": "Prepare message table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare message table": {
+      "main": [
+        [
+          {
+            "node": "Existing collection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Existing collection": {
+      "main": [
+        [
+          {
+            "node": "Find available chats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find available chats": {
+      "main": [
+        [
+          {
+            "node": "Choose chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Choose chat": {
+      "main": [
+        [
+          {
+            "node": "Read latest messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read latest messages": {
+      "main": [
+        [
+          {
+            "node": "Prepare rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare rows": {
+      "main": [
+        [
+          {
+            "node": "Save without duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "executionTimeout": 120,
+    "timezone": "UTC"
+  }
+}

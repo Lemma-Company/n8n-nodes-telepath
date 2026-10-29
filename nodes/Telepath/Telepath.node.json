@@ -1,0 +1,16 @@
+{
+  "node": "n8n-nodes-telepath.telepath",
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "Productivity"
+  ],
+  "resources": {
+    "primaryDocumentation": [
+      {
+        "url": "https://github.com/Lemma-Company/n8n-nodes-telepath#readme"
+      }
+    ]
+  }
+}

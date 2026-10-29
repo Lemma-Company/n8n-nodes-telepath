@@ -1,0 +1,62 @@
+{
+  "name": "Telepath \u2014 recent-message snapshot every five minutes",
+  "nodes": [
+    {
+      "id": "manual",
+      "name": "Every five minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "telepath",
+      "name": "Telepath",
+      "type": "n8n-nodes-telepath.telepath",
+      "typeVersion": 1,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "resource": "chat",
+        "operation": "telegram_recent_messages",
+        "additionalFields": {
+          "limit": 50
+        },
+        "options": {
+          "splitResults": false
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Every five minutes": {
+      "main": [
+        [
+          {
+            "node": "Telepath",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}
