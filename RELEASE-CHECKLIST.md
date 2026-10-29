@@ -19,9 +19,9 @@
 - [x] Verify refresh using n8n's actual OAuth helper: injected an invalid access token into the isolated test credential; native refresh saved a new token and the complete read/table workflow succeeded. Temporary plaintext credential files were removed. Revoked-grant reconnect remains a manual support path.
 - [x] 30-operation REST catalog deployed; existing 25 routes preserved. Health and unauthenticated guards checked.
 - [x] Public `Lemma-Company/n8n-nodes-telepath` repository created; GitHub CI passed. npm publisher verified as `olegnikeshin`, with user-confirmed 2FA.
-- [ ] Configure npm trusted publishing for `.github/workflows/publish.yml`.
-- [ ] Publish the reviewed version from a version tag through GitHub Actions with provenance.
-- [ ] Run the n8n package scanner against the published npm package.
+- [x] Configure npm trusted publishing for `.github/workflows/publish.yml`.
+- [x] Publish version 0.1.1 from tag `v0.1.1` through GitHub Actions with provenance (run 40849007959). Version 0.1.0 stopped before upload because the workflow initially bypassed the official release command.
+- [x] Official `@n8n/scan-community-package` passed all checks for `n8n-nodes-telepath@0.1.1`, including attested source at commit `8369b69`.
 - [ ] Submit through https://creators.n8n.io/nodes and address reviewer feedback.
 
 The local tests use synthetic accounts and mocked Telegram calls. They do not prove the complete n8n browser sign-in journey or imply that n8n has approved this package. Do not mark external gates complete based only on local build/lint output.

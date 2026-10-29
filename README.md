@@ -4,6 +4,8 @@ Connect your Telegram to n8n through [Telepath](https://telepath.lemma.company).
 
 Telepath is hosted: you do not need to run a Telepath server or provide Telegram API ID/hash credentials. Your own n8n instance can be n8n Cloud or self-hosted, subject to package availability.
 
+**Release:** [0.1.1 on npm](https://www.npmjs.com/package/n8n-nodes-telepath), published through GitHub Actions with provenance. The official n8n package scanner passed.
+
 **Directory status:** community integration, not yet verified by n8n. Source and examples are public. n8n Cloud installation requires directory verification; use self-hosted n8n while verification is pending.
 
 ## Installation
